@@ -3,33 +3,6 @@
 
 from random import randint, shuffle
 
-
-def print_board(board):
-    """
-    Prints the sudoku board.
-
-    Args:
-        board (list[list[int]]): A 9x9 sudoku board represented as a list of lists of integers.
-
-    Returns:
-        None.
-    """
-
-    boardString = ""
-    for i in range(9):
-        for j in range(9):
-            boardString += str(board[i][j]) + " "
-            if (j + 1) % 3 == 0 and j != 0 and j + 1 != 9:
-                boardString += "| "
-
-            if j == 8:
-                boardString += "\n"
-
-            if j == 8 and (i + 1) % 3 == 0 and i + 1 != 9:
-                boardString += "- - - - - - - - - - - \n"
-    print(boardString)
-
-
 def find_empty(board):
     """
     Finds an empty cell in the sudoku board.
@@ -152,7 +125,7 @@ def generate_board(removed_cells=45):
 
     Returns:
         list[list[int]]: A 9x9 sudoku board represented as a list of lists of integers.
-        
+
     Raises:
         ValueError: If removed_cells is greater than or equal to 65, resulting in 16 or fewer filled cells.
     """
@@ -210,10 +183,3 @@ def generate_board(removed_cells=45):
         board[row][col] = 0
 
     return board
-
-
-if __name__ == "__main__":
-    board = generate_board()
-    print_board(board)
-    solve(board)
-    print_board(board)
