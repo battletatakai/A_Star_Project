@@ -78,6 +78,49 @@ def valid(board, pos, num):
     return True
 
 
+def solve_A(board, cell_cand=None):
+
+    """ Function created to solve sudoku using our A* algorithm 
+    
+    Recycled some components from the backtracking algorithm that was provided """
+    
+    # Imports needed for this specific function
+    from astar import empty_cells_cand, update_candidates
+    import heapq
+
+    if cell_cand is None:
+        # Initialize the dictionary of empty cells with candidates
+        cell_cand = empty_cells_cand(board)
+
+    if not cell_cand:
+        return True  # Board has been solved
+
+    # Use a priority queue to get the cell with the fewest candidates
+    priority_queue = [(len(candidates), (i, j), candidates) for (i, j), candidates in cell_cand.items()]
+    heapq.heapify(priority_queue)
+
+    while priority_queue:
+        dont_use, (i, j), candidates = heapq.heappop(priority_queue)
+
+        for num in candidates:
+            if valid(board, (i, j), num):
+                # Place the number on the board
+                board[i][j] = num
+                # Update the candidates dictionary
+                update_candidates(cell_cand, board, (i, j), num, add=True)
+
+                
+                if solve_A(board, cell_cand): # Recursive step
+                    return True
+
+                board[i][j] = 0
+                update_candidates(cell_cand, board, (i, j), num, add=False)
+
+        return False
+
+    return False
+
+
 def solve(board):
     """
     Solves the sudoku board using the backtracking algorithm.
@@ -103,7 +146,7 @@ def solve(board):
     return False
 
 
-def generate_board():
+def generate_board(removed_cells=45):
     """
     Generates a random sudoku board with fewer initial numbers.
 
@@ -155,8 +198,7 @@ def generate_board():
 
     fill_cells(board, 0, 0)
 
-    # Remove a greater number of cells to create a puzzle with fewer initial numbers
-    for _ in range(randint(55, 65)):
+    for _ in range(removed_cells):
         row, col = randint(0, 8), randint(0, 8)
         board[row][col] = 0
 

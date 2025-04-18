@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from sudokutools import valid, solve, find_empty, generate_board
+from sudokutools import valid, solve, solve_A, find_empty, generate_board
 from copy import deepcopy
 from sys import exit
 import pygame
@@ -137,6 +137,59 @@ class Board:
         self.window.blit(text, (388, 542))
         pygame.display.flip()  # update the game window
 
+    def visualSolve_A(self, wrong, time):
+        """ Shows the visual solve for our A* algorithm
+        
+        Just helps visualize the algorithm and the path it takes to solve 
+        
+        A lot of what was used here is recycled from the provided repo """
+        
+        # Needed imports for this specific function
+        from astar import empty_cells_cand, update_candidates
+        import heapq
+
+        # Initialize candidates and priority queue
+        cell_cand = empty_cells_cand(self.board)
+        if not cell_cand:
+            return True  # Board is solved
+
+        priority_queue = [(len(candidates), (i, j), candidates) for (i, j), candidates in cell_cand.items()]
+        heapq.heapify(priority_queue)
+
+        while priority_queue:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    exit()
+
+            dont_use, (i, j), candidates = heapq.heappop(priority_queue)
+
+            for num in candidates:
+                if valid(self.board, (i, j), num):
+                # Place the number and update the board visually
+                    self.board[i][j] = num
+                    self.tiles[i][j].value = num
+                    self.tiles[i][j].correct = True
+                    pygame.time.delay(63)
+                    self.redraw({}, wrong, time)
+
+                # Update candidates and recurse
+                    update_candidates(cell_cand, self.board, (i, j), num, add=True)
+                    if self.visualSolve_A(wrong, time):
+                        return True
+
+                # Backtrack
+                    self.board[i][j] = 0
+                    self.tiles[i][j].value = 0
+                    self.tiles[i][j].incorrect = True
+                    self.tiles[i][j].correct = False
+                    pygame.time.delay(63)
+                    self.redraw({}, wrong, time)
+                    update_candidates(cell_cand, self.board, (i, j), num, add=False)
+
+            return False
+
+        return False
+
     def visualSolve(self, wrong, time):
         """
         Recursively solves the Sudoku board visually, highlighting correct and incorrect tiles as it fills them in.
@@ -158,6 +211,13 @@ class Board:
 
         for nums in range(9):
             if valid(self.board, (empty[0], empty[1]), nums + 1):
+
+                # Count number of missing specific numbers
+                # Could have Values stored for each number to get path cost
+                # Find candidates for each missing cell
+                # Calculate total cost to start at lowest cost
+
+                
                 # fill in the current empty tile with a valid number
                 self.board[empty[0]][empty[1]] = nums + 1
                 self.tiles[empty[0]][empty[1]].value = nums + 1
@@ -312,18 +372,13 @@ def main():
     board = Board(screen)
     selected = (-1, -1)
     keyDict = {}
-    solved = False
     startTime = time.time()
 
-    # Loop until the sudoku is solved
-    while not solved:
+    # Loop until the user escapes
+    while True:
         # Get elapsed time and format it to display in the window
         elapsed = time.time() - startTime
         passedTime = time.strftime("%H:%M:%S", time.gmtime(elapsed))
-
-        # Check if the sudoku is solved
-        if board.board == board.solvedBoard:
-            solved = True
 
         # Handle events
         for event in pygame.event.get():
@@ -395,8 +450,39 @@ def main():
                 if event.key == pygame.K_h:
                     board.hint(keyDict)
 
+                # Handle restart key
+                if event.key == pygame.K_r:
+                    board = Board(screen)
+                    selected = (-1, -1)
+                    keyDict = {}
+                    wrong = 0
+                    startTime = time.time()
+
+                # Handle escape key
+                if event.key == pygame.K_ESCAPE:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            return
+
                 # Handle space key
                 if event.key == pygame.K_SPACE:
+                    # Deselect all tiles and clear keyDict
+                    for i in range(9):
+                        for j in range(9):
+                            board.tiles[i][j].selected = False
+                    keyDict = {}
+
+                    # Solve the sudoku visually and reset all tile correctness
+                    elapsed = time.time() - startTime
+                    passedTime = time.strftime("%H:%M:%S", time.gmtime(elapsed))
+                    board.visualSolve_A(wrong, passedTime)
+                    for i in range(9):
+                        for j in range(9):
+                            board.tiles[i][j].correct = False
+                            board.tiles[i][j].incorrect = False
+                    print(passedTime)
+
+                if event.key == pygame.K_d:
                     # Deselect all tiles and clear keyDict
                     for i in range(9):
                         for j in range(9):
@@ -411,16 +497,9 @@ def main():
                         for j in range(9):
                             board.tiles[i][j].correct = False
                             board.tiles[i][j].incorrect = False
-
-                    # Set solved to True after solving the sudoku:
-                    solved = True
+                    print(passedTime)
 
         board.redraw(keyDict, wrong, passedTime)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
-
 
 main()
 pygame.quit()
