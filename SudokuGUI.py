@@ -28,6 +28,18 @@ class Board:
             for i in range(9)
         ]
         self.window = window
+        
+        # Dictionary of available user inputs for the help panel
+        self.user_inputs = {
+            "1-9": "Enter numbers",
+            "Backspace": "Clear cell",
+            "Enter": "Confirm value",
+            "H": "Get hint",
+            "R": "Restart game",
+            "Space": "Solve (A*)",
+            "D": "Solve (backtracking)",
+            "Esc": "Exit game"
+        }
 
     def draw_board(self):
         """
@@ -135,6 +147,10 @@ class Board:
         font = pygame.font.SysFont("Bahnschrift", 40)
         text = font.render(str(time), True, (0, 0, 0))
         self.window.blit(text, (388, 542))
+        
+        # Draw the help panel on the side
+        self.draw_help_panel()
+        
         pygame.display.flip()  # update the game window
 
     def visualSolve_A(self, wrong, time):
@@ -263,6 +279,57 @@ class Board:
             elif self.board == self.solvedBoard:
                 return False  # the board is already solved, so no hint can be provided.
 
+    def draw_help_panel(self):
+        """
+        Draws a panel that shows available user inputs.
+        """
+        panel_x = 550
+        panel_y = 20
+        panel_width = 260
+        panel_height = 300
+        
+        # Draw panel background
+        panel_rect = pygame.Rect(panel_x, panel_y, panel_width, panel_height)
+        pygame.draw.rect(self.window, (240, 240, 240), panel_rect)
+        pygame.draw.rect(self.window, (0, 0, 0), panel_rect, 2)
+        
+        # Draw title
+        title_font = pygame.font.SysFont("Bahnschrift", 24)
+        title_text = title_font.render("Available Controls", True, (0, 0, 0))
+        title_width = title_text.get_width()
+        title_x = panel_x + (panel_width - title_width) // 2  # Center the title
+        self.window.blit(title_text, (title_x, panel_y + 10))
+        
+        # Draw divider line
+        pygame.draw.line(
+            self.window,
+            (0, 0, 0),
+            (panel_x + 10, panel_y + 40),
+            (panel_x + panel_width - 10, panel_y + 40),
+            2
+        )
+        
+        # Draw controls list
+        font = pygame.font.SysFont("Bahnschrift", 16)
+        y_offset = panel_y + 60
+        key_column_width = 96
+        
+        for key, description in self.user_inputs.items():
+            # Draw key with background highlight
+            key_bg_rect = pygame.Rect(panel_x + 15, y_offset - 2, key_column_width - 10, 22)
+            pygame.draw.rect(self.window, (220, 230, 255), key_bg_rect)
+            pygame.draw.rect(self.window, (180, 190, 220), key_bg_rect, 1)
+            
+            # Draw key text
+            key_text = font.render(key, True, (0, 0, 150))
+            self.window.blit(key_text, (panel_x + 20, y_offset))
+            
+            # Draw description
+            desc_text = font.render(description, True, (0, 0, 0))
+            self.window.blit(desc_text, (panel_x + key_column_width + 15, y_offset))
+            
+            y_offset += 30
+
 
 class Tile:
     def __init__(
@@ -351,9 +418,9 @@ class Tile:
 
 def main():
     # Set up the pygame window
-    screen = pygame.display.set_mode((540, 590))
+    screen = pygame.display.set_mode((820, 590))
     screen.fill((255, 255, 255))
-    pygame.display.set_caption("Sudoku Solver")
+    pygame.display.set_caption("Sudoku Solver AI")
     icon = pygame.image.load("assets/thumbnail.png")
     pygame.display.set_icon(icon)
 
@@ -464,7 +531,7 @@ def main():
                         if event.type == pygame.QUIT:
                             return
 
-                # Handle space key
+                # Space key triggers visual solving with A* algorithm
                 if event.key == pygame.K_SPACE:
                     # Deselect all tiles and clear keyDict
                     for i in range(9):
@@ -482,6 +549,7 @@ def main():
                             board.tiles[i][j].incorrect = False
                     print(passedTime)
 
+                # D key triggers visual solving with backtracking algorithm
                 if event.key == pygame.K_d:
                     # Deselect all tiles and clear keyDict
                     for i in range(9):
