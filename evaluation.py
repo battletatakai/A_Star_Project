@@ -2,14 +2,13 @@ import copy
 import statistics
 import timeit
 from sudokutools import generate_board, solve, solve_A
-from tqdm import tqdm
 import typing
 
 ## Evaluation Parameters ##
 # Number of pieces removed from the board to create a puzzle, list of ints
 DIFFICULTY_RANGE = range(1, 65)  
-# Number of puzzles to generate for each difficulty level
-NUM_PUZZLES = 1  
+# Number of puzzles to solve for each difficulty level
+NUM_PUZZLES = 10 
 # Number for the best of n runs for each algorithm
 NUM_BEST_OF = 3  
 
@@ -35,7 +34,6 @@ board = _setup_timer()
 {solving_function.__name__}(board)
 """
     
-    # Use timeit for accurate measurement
     try:
         # Create a timer with globals that include our setup function and solving function
         timer = timeit.Timer(
@@ -47,10 +45,12 @@ board = _setup_timer()
         )
         
         # Run the timer multiple times and take the best result, to prevent outliers
-        times = timer.repeat(repeat=num_runs, number=1)
-        best_time = min(times)
+        times: list[float] = timer.repeat(repeat=num_runs, number=1)
+        best_time: float = min(times)
         
+        # Return solved board, the best time in seconds, and whether the board was solved
         return board_copy, best_time, True
+    
     except Exception as e:
         print(f"Error during timing: {e}")
         return board_copy, 0, False
@@ -77,7 +77,7 @@ def compare_algorithms(num_puzzles: int, removed_cells: int):
             astar_times.append(astar_time)
     
     # Calculate statistics
-    # Most of these are unused for our analysis
+    # Most of these are unused for our analysis, but could be helpful if we come back to this project
     stats = {
         "backtracking": {
             "success_rate": backtracking_success / num_puzzles,
@@ -97,34 +97,31 @@ def compare_algorithms(num_puzzles: int, removed_cells: int):
     
     return stats
 
-def evaluate_difficulty_impact(difficulty_levels: int, puzzles_per_level: int):
-    results = {}
-    
-    # Calculate total iterations for progress bar
-    total_puzzles = len(difficulty_levels) * puzzles_per_level
-    print(f"\nEvaluating {len(difficulty_levels)} difficulty levels with {puzzles_per_level} puzzles each")
-    
-    # Create progress bar
-    with tqdm(total=total_puzzles, desc="Testing difficulties", unit="puzzle") as pbar:
-        for difficulty in difficulty_levels:
-            stats = compare_algorithms(num_puzzles=puzzles_per_level, removed_cells=difficulty)
-            results[str(difficulty)] = stats
-            
-            # Update progress bar after each difficulty level
-            pbar.update(puzzles_per_level)
-            pbar.set_description(f"Testing difficulty {difficulty}")
-    
-    return results
-
 if __name__ == "__main__":
     # Testing Parameters
     difficulty_levels = DIFFICULTY_RANGE
     puzzles_per_level = NUM_PUZZLES
     
-    difficulty_results = evaluate_difficulty_impact(
-        difficulty_levels=difficulty_levels, 
-        puzzles_per_level=puzzles_per_level
-    )
+    difficulty_results = {}
+    
+    # Print total number of iterations
+    total_puzzles = len(difficulty_levels) * puzzles_per_level
+    print(f"\nEvaluating {len(difficulty_levels)} difficulty levels with {puzzles_per_level} puzzles each")
+
+    # Keep track of the current puzzle for progress tracking
+    current_puzzle = 0
+    
+    for difficulty in difficulty_levels:
+        print(f"Testing difficulty {difficulty} [{current_puzzle}/{total_puzzles}]")
+        stats = compare_algorithms(num_puzzles=puzzles_per_level, removed_cells=difficulty)
+        difficulty_results[str(difficulty)] = stats
+        
+        # Update progress counter
+        current_puzzle += puzzles_per_level
+        
+        # Show completion percentage
+        completion = (current_puzzle / total_puzzles) * 100
+        print(f"Progress: {completion:.1f}% complete")
     
     # Print summary of difficulty impact
     print(f"\nDifficulty Impact Summary with {puzzles_per_level} iterations:")
@@ -140,7 +137,7 @@ if __name__ == "__main__":
         diff_str = str(difficulty)
         stats = difficulty_results[diff_str]
         
-        # Format backtracking results
+        # Format Backtracking results
         bt_time = stats['backtracking']['avg_time']
         bt_success = stats['backtracking']['success_rate'] * 100  # Convert to percentage
         bt_time_str = f"{bt_time:.5f}s" if bt_time is not None else "N/A"
@@ -155,8 +152,8 @@ if __name__ == "__main__":
         # Calculate the difference in time for comparing both algorithms
         if bt_time is not None and astar_time is not None:
 
-            # If result is very small, treat it as zero for comparison
-            # This is to avoid division by zero or very small numbers causing large speedup values (infinity)
+            # Use a small epsilon to avoid division by zero errors
+            # Calculate the speedup factor for comparison column
             epsilon = 1e-10
             if abs(astar_time) < epsilon:
                 comparison = f"BT is much slower (A* took ~0s)"
