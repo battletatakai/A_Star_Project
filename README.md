@@ -1,84 +1,133 @@
-<p align="center">
-  <img src="https://github.com/dhhruv/Sudoku-Solver/blob/master/assets/thumbnail.png" width="256" height="256">
-  <h2 align="center" style="margin-top: -4px !important;">Sudoku Solver: A Fun and Challenging Way to Exercise Your Brain!</h2>
-  <p align="center">
-    <a href="https://github.com/dhhruv/Sudoku-Solver/blob/master/LICENSE">
-      <img src="https://img.shields.io/badge/license-MIT-informational">
-    </a>
-    <a href="https://www.python.org/">
-    	<img src="https://img.shields.io/badge/python-v3.8-informational">
-    </a>
-  </p>
-</p>
-<p align="center">
-	<img src="http://ForTheBadge.com/images/badges/made-with-python.svg">
-</p>
-<p align="center">   
-	<a href="https://dev.to/dhhruv/sudoku-solver-a-visualizer-made-using-backtracking-algorithm-5f0d">
-    	<img src="https://img.shields.io/badge/dev.to-0A0A0A?style=for-the-badge&logo=dev.to&logoColor=white">
-    </a>
-</p>
+# Description
+An implementation of Backtracking and A* Search to solve a Sudoku Board. Built for CPSC 481 Artifical Intelligence course project at California State University, Fullerton.
 
+# Team Members
+* Julian Matuszewski
+* Harrison Battle
+* George Hanna
+* Ethan Jin
 
-- Are you ready to put your logical thinking and reasoning skills to the test? Look no further than Sudoku Solver, the ultimate tool for solving Sudoku puzzles quickly and easily.
+# Installation and Setup
 
-- Sudoku is a popular number-placement puzzle game that requires players to fill a nine-by-nine grid with digits so that each row, column, and 3x3 section contains numbers between 1 and 9, with each number used once and only once in each section. It's a challenging game that helps improve concentration, memory, and cognitive abilities.
+## Requirements
+- Python 3.x
+- Pygame library for GUI program
 
-- With Sudoku Solver, you don't have to spend hours solving puzzles by hand. Our powerful algorithm solves almost any Sudoku puzzle in seconds, allowing you to move on to more challenging puzzles quickly. Plus, our visualizer feature demonstrates how the backtracking algorithm works, so you can understand the logic behind each solution.
-
-## Features:
-- Generates a random, solvable Sudoku board every time the script is executed
-- Easy-to-use GUI for inputting and solving puzzles
-- Visualizer feature demonstrates how the backtracking algorithm works
-- Option to receive hints for tricky puzzles
-- Improves cognitive abilities, including concentration and logical thinking
-
-## How to Use:
-To use Sudoku Solver, simply download the repository and run the SudokuGUI.py file. You'll be presented with a random Sudoku board and a GUI for inputting your solutions. Use the left-click to select the box you want to fill, then enter your value and confirm it by pressing the Enter key.
-
-<p align="center">
-	<img src="https://github.com/dhhruv/Sudoku-Solver/blob/master/assets/Entering%20Values.gif">
-</p>
-
-If you get stuck on a tricky puzzle, press the Spacebar key to solve the board using the backtracking algorithm. You can also receive hints by pressing the "h" key, which will display a random correct value on the board.
-
-<p align="center">
-	<img src="https://github.com/dhhruv/Sudoku-Solver/blob/master/assets/Visualizer.gif">
-</p>
-
-## Input:
-
-| Keys              | Actions                                                         |
-|-------------------|-----------------------------------------------------------------|
-| `Left Click`      | Selects the Box to enter a value into that cell.                |
-| `Enter`           | Confirms the Value written on the board.     |
-| `Backspace/Delete`| Deletes the value in that cell.                                 |
-| `Space`           | Solves the Board using the Algorithm.                           |
-| `h`               | Gives a Hint. Displays a random correct value on the board.     |
-
-## Requirements:
-To run Sudoku Solver, you'll need to have Python and PyGame installed on your system. You can install the necessary requirements using pip:
-```
-pip install -r requirements.txt
+## How to Install
+1. Download this repository to your computer
+2. Make sure Python is installed on your system
+3. Install the required package by running:
+```  
+pip install -r requirements.txt  
 ```
 
-## Execution:
-- Clone this repository using
-```
-git clone https://github.com/dhhruv/Sudoku-Solver.git
-```
-**OR**
-- Zip Download the Repository and Extract it's contents.
-- Now run the [SudokuGUI](https://github.com/dhhruv/Sudoku-Solver/blob/master/SudokuGUI.py) file directly in your Terminal using
+## Running Sudoku using the GUI (requires Pygame)
 ```
 python SudokuGUI.py
 ```
-**OR**
+* Press 'SPACE' to solve the Sudoku board using the A* algorithm
+* Press 'G' to solve the Sudoku board using the traditional Backtracking Algorithm
+* Press 'R' to reset the Board to a random puzzle
+* Press 'ESC' to close the program
+
+## Running the Evaluation Program
+* Before running, set up desired parameters in the source file:
 ```
-python3 SudokuGUI.py
+DIFFICULTY_RANGE = range(1, 65)
+NUM_PUZZLES = 10
+NUM_BEST_OF = 3
+```
+* Run the application:
+```
+python evaluation.py
 ```
 
-## Conclusion:
-If you're a fan of Sudoku puzzles, Sudoku Solver is the perfect tool to help you solve them quickly and easily. With its powerful algorithm and easy-to-use GUI, you'll be solving puzzles in no time. Plus, Sudoku is a great way to exercise your brain and improve your cognitive abilities, making it a fun and challenging game for people of all ages. So what are you waiting for? Download Sudoku Solver today and start playing!
+# Layout
 
-<p align='center'><b>Made with ❤ by Dhruv Panchal</b></p>
+## Files
+
+- **SudokuGUI.py**: The main program file containing the game interface and visualization
+- **astar.py**: Helper functions for the A\* algorithm
+- **sudokutools.py**: Helper functions for Sudoku puzzle generation and validation
+- **evaluation.py**: Tools for evaluating algorithm performance
+- **requirements.txt**: List of required Python packages
+
+## Components
+
+### SudokuGUI.py
+
+#### visualSolve function
+* Called on the Sudoku board to find the solution using the Backtracking implementation
+* Has a built-in time delay so that it can be visualized
+
+#### visualSolve_A function
+* Called on the Sudoku board to find the solution using our A* implementation
+* Has a built-in time delay so that it can be visualized
+
+#### Board Class
+* Stores state of the Board and functions for modifying state
+* Contains rendering and gameplay logic using Pygame
+* Handles rendering help panel
+* Backtracking and A* functions are defined here for visual solving
+
+#### Tile Class
+* Stores state of a single Sudoku tile
+* Has functions for modifying tiles and rendering using Pygame
+
+#### main function
+* Pygame initialization and Board Class initialization
+* Variables used for handling Program logic
+* Main game loop used for handling user input, updating render state, and checking if puzzle is solved
+
+### sudokutools.py
+
+#### print_board function
+* Prints the sudoku board in a formatted, readable layout
+* Adds visual separators between 3×3 blocks for better readability
+
+#### find_empty function
+* Locates the first empty cell (value 0) in the sudoku board
+* Returns the position as a tuple of (row, column) or None if no empty cells exist
+
+#### valid function
+* Validates if a number can be placed in a specific position on the board
+* Checks row, column, and 3×3 box constraints for the number
+
+#### solve_A function
+* A* algorithm implementation for solving Sudoku puzzles with no time delay (realtime performance)
+* Uses a heap-based priority queue to select cells with the fewest candidates
+
+#### solve function
+* Backtracking algorithm implementation for solving Sudoku puzzles with no time delay (realtime performance)
+* Recursively tries valid numbers in empty cells until solution is found
+
+#### generate_board function
+* Creates a random, valid Sudoku puzzle
+* Fills diagonal boxes first, then uses backtracking to fill the rest
+* Removes a specified number of cells to create the puzzle
+
+### astar.py
+
+#### empty_cells_cand function
+* Identifies all empty cells and their number candidates
+* Creates a dictionary mapping cell positions to valid candidate numbers
+
+#### update_candidates function
+* Used to update dictionary once a cell has been solved
+* Updates all possible candidates as a way to dyanmically update what the next best choice for solving would be
+
+### evaluation.py
+
+#### measure_solving_time function
+* Measures time for each algorithm to solve a Board
+* Takes the best of n time it takes (n can be modified for testing)
+
+#### compare_algorithms function
+* Benchmarks different solving algorithms on the same puzzle
+* Generates statistics on solution times and steps required
+
+#### 'main' function
+* Tests algorithms' performance by iterating through a list of integers where each integer is the number of pieces removed from the puzzle
+* Set up to compare the A* solving function and the Backtracking solving function
+* Uses parameters defined by the user to set up testing
+* Formats and prints table in the command line output showing the testing results
