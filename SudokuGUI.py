@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from sudokutools import valid, solve, solve_A, find_empty, generate_board
+from sudokutools import valid, find_empty, generate_board, solve
 from copy import deepcopy
 from sys import exit
 import pygame
