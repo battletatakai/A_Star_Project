@@ -152,7 +152,14 @@ def generate_board(removed_cells=45):
 
     Returns:
         list[list[int]]: A 9x9 sudoku board represented as a list of lists of integers.
+        
+    Raises:
+        ValueError: If removed_cells is greater than or equal to 65, resulting in 16 or fewer filled cells.
     """
+
+    # Check if removed_cells would result in 16 or fewer filled cells (unsolvable)
+    if removed_cells >= 65:
+        raise ValueError("Cannot create a board with 16 or fewer filled cells. The minimum number of clues for a solvable Sudoku is 17.")
 
     board = [[0 for i in range(9)] for j in range(9)]
 
