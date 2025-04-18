@@ -527,9 +527,7 @@ def main():
 
                 # Handle escape key
                 if event.key == pygame.K_ESCAPE:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            return
+                    exit()  # Exit the program immediately when escape is pressed
 
                 # Space key triggers visual solving with A* algorithm
                 if event.key == pygame.K_SPACE:
@@ -547,7 +545,6 @@ def main():
                         for j in range(9):
                             board.tiles[i][j].correct = False
                             board.tiles[i][j].incorrect = False
-                    print(passedTime)
 
                 # D key triggers visual solving with backtracking algorithm
                 if event.key == pygame.K_d:
@@ -565,7 +562,6 @@ def main():
                         for j in range(9):
                             board.tiles[i][j].correct = False
                             board.tiles[i][j].incorrect = False
-                    print(passedTime)
 
         board.redraw(keyDict, wrong, passedTime)
 
