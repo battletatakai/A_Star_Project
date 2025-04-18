@@ -2,15 +2,10 @@ from sudokutools import valid
 
 def empty_cells_cand(board):
 
-    """ Function used to find all empty cells and create a dictionary that sets keys as the coordiantes
-
-    and values are the possible candidates for that specific cell 
-    
-    We ended up taking out the path cost as it was not helping with solving and instead used up more resources 
-    
-    Conceptually the path cost is the number of empty cells which would create an even cost across every empty cell
-    
-    The heuristic cost of candidates is what drives the function """
+    """
+    Function used to find all empty cells and create a dictionary that sets keys as the coordiantes
+    and values are the possible candidates for that specific cell.
+    """
 
     # Dictionary for empty cells
     cell_cand = {}
@@ -35,9 +30,10 @@ def empty_cells_cand(board):
     return cell_cand
 
 def update_candidates(cell_cand, board, coordinates_cell, num, add=True):
-    """ Function used to update dictionary once a cell has been solved
-    
-    Also updates all possible candidates as a way to dyanmically update what the next best choice for solving would be """
+    """
+    Function used to update dictionary once a cell has been solved
+    Also updates all possible candidates as a way to dyanmically update what the next best choice for solving would be
+    """
 
     if add:
         # Deletes specific empty cell once solved
