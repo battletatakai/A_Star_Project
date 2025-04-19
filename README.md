@@ -1,5 +1,5 @@
 # Description
-A Fork of Dhruv Panchal's Sudoku Solver that uses A* algorithm to solve Sudoku instead of a traditional backtracking algorithm. Built for CPSC 481 Artifical Intelligence course project at California State University, Fullerton.
+A GUI implementation of Sudoku that comes with Backtracking and A* algorithms for solving the puzzle. Comes with a GUI application and a program used to evaluate and compare Backtracking to A*. Built for CPSC 481 Artifical Intelligence course project at California State University, Fullerton. Based on Sudoku Solver by Dhruv Panchal.
 
 # Team Members
 * Julian Matuszewski
@@ -80,10 +80,6 @@ python evaluation.py
 * Main game loop used for handling user input, updating render state, and checking if puzzle is solved
 
 ### sudokutools.py
-
-#### print_board function
-* Prints the sudoku board in a formatted, readable layout
-* Adds visual separators between 3×3 blocks for better readability
 
 #### find_empty function
 * Locates the first empty cell (value 0) in the sudoku board
