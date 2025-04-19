@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from sudokutools import valid, find_empty, generate_board, solve
+from astar import empty_cells_cand, update_candidates
+import heapq
 from copy import deepcopy
 from sys import exit
 import pygame
@@ -119,10 +121,10 @@ class Board:
                     self.tiles[j][i].draw((50, 205, 50), 4)
                 elif self.tiles[i][j].correct:
                     # highlight correct tiles in dark green
-                    self.tiles[j][i].draw((34, 139, 34), 4)
+                    self.tiles[i][j].draw((34, 139, 34), 4)
                 elif self.tiles[i][j].incorrect:
                     # highlight incorrect tiles in red
-                    self.tiles[j][i].draw((255, 0, 0), 4)
+                    self.tiles[i][j].draw((255, 0, 0), 4)
 
         if len(keys) != 0:
             for value in keys:
@@ -159,10 +161,6 @@ class Board:
         Just helps visualize the algorithm and the path it takes to solve 
         
         A lot of what was used here is recycled from the provided repo """
-        
-        # Needed imports for this specific function
-        from astar import empty_cells_cand, update_candidates
-        import heapq
 
         # Initialize candidates and priority queue
         cell_cand = empty_cells_cand(self.board)
@@ -506,12 +504,10 @@ def main():
                                 board.tiles[selected[1]][selected[0]].value = 0
                                 del keyDict[selected]
                                 # break
-
-                            board.tiles[selected[1]][selected[0]].value = keyDict[
-                                selected
-                            ]
-                            board.board[selected[1]][selected[0]] = keyDict[selected]
-                            del keyDict[selected]
+                            else:
+                                board.tiles[selected[1]][selected[0]].value = keyDict[selected]
+                                board.board[selected[1]][selected[0]] = keyDict[selected]
+                                del keyDict[selected]
 
                 # Handle hint key
                 if event.key == pygame.K_h:
