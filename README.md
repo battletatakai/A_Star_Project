@@ -1,5 +1,5 @@
 # Description
-An implementation of Backtracking and A* Search to solve a Sudoku Board. Built for CPSC 481 Artifical Intelligence course project at California State University, Fullerton.
+A Fork of Dhruv Panchal's Sudoku Solver that uses A* algorithm to solve Sudoku instead of a traditional backtracking algorithm. Built for CPSC 481 Artifical Intelligence course project at California State University, Fullerton.
 
 # Team Members
 * Julian Matuszewski
